@@ -32,25 +32,14 @@ const PeriodContextProvider = ({
   const [endMinuteStr, setEndMinuteStr] = useState(
     defaultEndTime ? defaultEndTime.minuteStr : ""
   );
-  const [is24, setIs24] = useState(
-    defaultStartTime &&
-      defaultEndTime &&
-      defaultStartTime.timeType === TYPE_AM &&
-      parseInt(defaultStartTime.hourStr, 10) === 0 &&
-      parseInt(defaultStartTime.minuteStr, 10) === 0 &&
-      defaultEndTime.timeType === TYPE_PM &&
-      parseInt(defaultEndTime.hourStr, 10) === 11 &&
-      parseInt(defaultEndTime.minuteStr, 10) === 59
-      ? true
-      : false
-  );
+ 
   const [isStartTimeValid, setIsStartTimeValid] = useState(false);
   const [isEndTimeValid, setIsEndTimeValid] = useState(false);
   const [startTimeErrMessage, setStartTimeErrMessage] = useState("");
   const [endTimeErrMessage, setEndTimeErrMessage] = useState("");
-  const [isStartTimeRangeValid, setIsStartTimeRangeValid] = useState(false);
+  const [isStartTimeRangeValid, setIsStartTimeRangeValid] = useState(true);
   const [startTimeRangeErrMessage, setStartTimeRangeErrMessage] = useState("");
-  const [isEndTimeRangeValid, setIsEndTimeRangeValid] = useState(false);
+  const [isEndTimeRangeValid, setIsEndTimeRangeValid] = useState(true);
   const [endTimeRangeErrMessage, setEndTimeRangeErrMessage] = useState("");
 
   // here we pass our value to useMemo,
@@ -70,8 +59,6 @@ const PeriodContextProvider = ({
       setStartMinuteStr,
       endMinuteStr,
       setEndMinuteStr,
-      is24,
-      setIs24,
       isStartTimeValid,
       setIsStartTimeValid,
       isEndTimeValid,
@@ -96,7 +83,6 @@ const PeriodContextProvider = ({
       endHourStr,
       startMinuteStr,
       endMinuteStr,
-      is24,
       isStartTimeValid,
       isEndTimeValid,
       startTimeErrMessage,

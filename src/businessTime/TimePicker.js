@@ -7,147 +7,65 @@ import {
   FormHelperText
 } from "@mui/material";
 import NumberInput from "./NumberInput";
-import { usePeriodContext } from "./PeriodContext";
 import { TYPE_AM, TYPE_PM } from "./Constants";
-import {
-  isTimeValid,
-  isStartTimeEarlierThanEndTime,
-  isEndTimeLaterThanStartTime
-} from "./lib";
 
-export default function TimePicker({
-  isStartTime = true,
-  isEndTime = false,
-  disabled = false
-}) {
+
+export default function TimePicker(props) {
   const {
+    isStartTime = true,
+    isEndTime = false,
+    disabled = false,
+    //
+    startHourStr="",
+    startMinuteStr="",
+    endHourStr="",
+    endMinuteStr="",
+    // 
     startTimeType,
-    setStartTimeType,
     endTimeType,
-    setEndTimeType,
+    onStartTimeTypeChange,
+    onEndTimeTypeChange,
+    //
     isStartTimeValid,
     isEndTimeValid,
+    isStartTimeRangeValid,
+    isEndTimeRangeValid,
     startTimeErrMessage,
     endTimeErrMessage,
-    startHourStr,
-    startMinuteStr,
-    endHourStr,
-    endMinuteStr,
-    setIsStartTimeValid,
-    setStartTimeErrMessage,
-    setIsEndTimeValid,
-    setEndTimeErrMessage,
-    isStartTimeRangeValid,
-    setIsStartTimeRangeValid,
     startTimeRangeErrMessage,
-    setStartTimeRangeErrMessage,
-    isEndTimeRangeValid,
-    setIsEndTimeRangeValid,
     endTimeRangeErrMessage,
-    setEndTimeRangeErrMessage
-  } = usePeriodContext();
+    //
+    verifyEndTime,
+    verifyStartTime,
+  } = props;
 
   const handleChange = (e) => {
-    const val = e.target.value;
+    const timeType = e.target.value;
     if (isStartTime) {
-      setStartTimeType(val);
-      if (
-        !isTimeValid({
-          hoursStr: startHourStr,
-          minutesStr: startMinuteStr,
-          isPm: e.target.value === TYPE_PM
-        })
-      ) {
-        setIsStartTimeValid(false);
-        setStartTimeErrMessage("錯誤的時間");
-      } else {
-        setIsStartTimeValid(true);
-        setStartTimeErrMessage("");
-        if (isEndTimeValid) {
-          const sOK = isStartTimeEarlierThanEndTime({
-            hoursStr: startHourStr,
-            minutesStr: startMinuteStr,
-            startTimeType: val,
-            endTimeType,
-            endHourStr,
-            endMinuteStr
-          });
-          const eOK = isEndTimeLaterThanStartTime({
-            hoursStr: endHourStr,
-            minutesStr: endMinuteStr,
-            startTimeType: val,
-            endTimeType,
-            startHourStr,
-            startMinuteStr
-          });
-
-          if (!sOK) {
-            setIsStartTimeRangeValid(false);
-            setStartTimeRangeErrMessage("開始時間要比結束營業時間早");
-          } else {
-            setIsStartTimeRangeValid(true);
-            setStartTimeRangeErrMessage("");
-          }
-
-          if (eOK) {
-            setIsEndTimeRangeValid(true);
-            setEndTimeRangeErrMessage("");
-          }
-        } else {
-          setIsStartTimeRangeValid(true);
-          setStartTimeRangeErrMessage("");
-        }
-      }
+      onStartTimeTypeChange(timeType);
+      verifyStartTime({
+        startHourStr,
+        startMinuteStr,
+        startTimeType: timeType,
+        endTimeType,
+        endHourStr,
+        endMinuteStr
+      });
     } else {
-      setEndTimeType(val);
-      if (
-        !isTimeValid({
-          hoursStr: endHourStr,
-          minutesStr: endMinuteStr,
-          isPm: e.target.value === TYPE_PM
-        })
-      ) {
-        setIsEndTimeValid(false);
-        setEndTimeErrMessage("錯誤的時間");
-      } else {
-        setIsEndTimeValid(true);
-        setEndTimeErrMessage("");
-        if (isStartTimeValid) {
-          const eOK = isEndTimeLaterThanStartTime({
-            hoursStr: endHourStr,
-            minutesStr: endMinuteStr,
-            startTimeType,
-            endTimeType: val,
-            startHourStr,
-            startMinuteStr
-          });
-          const sOK = isStartTimeEarlierThanEndTime({
-            hoursStr: startHourStr,
-            minutesStr: startMinuteStr,
-            startTimeType,
-            endTimeType: val,
-            endHourStr,
-            endMinuteStr
-          });
-          if (!eOK) {
-            setIsEndTimeRangeValid(false);
-            setEndTimeRangeErrMessage("結束時間要比開始營業時間晚");
-          } else {
-            setIsEndTimeRangeValid(true);
-            setEndTimeRangeErrMessage("");
-          }
-
-          if (sOK) {
-            setIsStartTimeRangeValid(true);
-            setStartTimeRangeErrMessage("");
-          }
-        } else {
-          setIsEndTimeRangeValid(true);
-          setEndTimeRangeErrMessage("");
-        }
-      }
+      onEndTimeTypeChange(timeType);
+      verifyEndTime({
+        startHourStr,
+        startMinuteStr,
+        startTimeType,
+        endTimeType: timeType,
+        endHourStr,
+        endMinuteStr
+      });
     }
   };
+
+  console.log('isEndTimeValid: ', isEndTimeValid)
+  console.log('endTimeErrMessage: ', endTimeErrMessage)
 
   return (
     <Box>
@@ -182,6 +100,7 @@ export default function TimePicker({
           isStartTime={isStartTime}
           isEndTime={isEndTime}
           disabled={disabled}
+          {...props}
         />
         <Typography sx={{ mx: 0.5 }} component="span">
           :
@@ -192,6 +111,7 @@ export default function TimePicker({
           isStartTime={isStartTime}
           isEndTime={isEndTime}
           disabled={disabled}
+          {...props}
         />
       </Box>
       <FormHelperText error={true}>

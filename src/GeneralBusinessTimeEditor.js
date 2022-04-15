@@ -1,15 +1,14 @@
 import "./styles.css";
-import { useState } from "react";
-import { Paper, Button, FormControlLabel, Checkbox } from "@mui/material";
+import {useState,useEffect} from 'react';
+import { Paper, Button, FormControlLabel, Checkbox, Box } from "@mui/material";
 
 import WeekSelector from "./businessTime/WeekSelector";
 import PeriodEditor from "./businessTime/PeriodEditor";
 
-import { PeriodContextProvider } from "./businessTime/PeriodContext";
-import { TYPE_AM, TYPE_PM } from "./businessTime/Constants";
+import { TYPE_AM, TYPE_PM, periodInitData } from "./businessTime/Constants";
+
 
 export default function GeneralBusinessTimeEditor({
-  id = null,
   week = [],
   disableWeek = [],
   period = [],
@@ -19,25 +18,40 @@ export default function GeneralBusinessTimeEditor({
   is24 = false,
   handle24hCheckBoxChange
 }) {
-  const getDefaultTime = (timeStr) => {
-    const hourStr = timeStr.split(":")[0];
-    const minuteStr = timeStr.split(":")[1];
-    const hour = parseInt(hourStr, 10);
-    return {
-      hourStr:
-        hour > 12
-          ? (hour - 12).toLocaleString("en-US", {
-              minimumIntegerDigits: 2,
-              useGrouping: false
-            })
-          : hourStr,
-      minuteStr,
-      timeType: hour > 12 ? TYPE_PM : TYPE_AM
-    };
+  const getTime = (timeObj) => {
+    const hourStr = timeObj[0];
+    const minuteStr = timeObj[1];
+    return { hourStr, minuteStr }
+  };
+
+  const handlePeriodChange = (newRecord, index) => {
+    if (period.length > 1) {
+      if (index === 0) 
+        onPeriodChange([newRecord, ...period.slice(1, period.length)])
+      else if (index === period.length-1)
+        onPeriodChange([...period.slice(0, period.length-1), newRecord])
+      else
+        onPeriodChange([...period.slice(0, index), newRecord, ...period.slice(index+1, period.length)])
+    } else {
+      onPeriodChange([newRecord])
+    }
+  };
+
+  const handlePeriodDelete = (index) => {
+    if (index === 0)
+      onPeriodChange([...period.slice(1, period.length)])
+    else if (index === period.length-1)
+      onPeriodChange([...period.slice(0, period.length-1)])
+    else
+      onPeriodChange([...period.slice(0, index), ...period.slice(index+1, period.length)])
+  };
+
+  const handelePeriodCreate = () => {
+    onPeriodChange([...period, periodInitData])
   };
 
   return (
-    <Paper sx={{ p: 2 }} variant="outlined" square>
+    <Paper sx={{ p: 2, mb:2 }} variant="outlined" square>
       <h2>GeneralBusinessTimeEditor</h2>
       <WeekSelector
         disableWeek={disableWeek}
@@ -57,15 +71,56 @@ export default function GeneralBusinessTimeEditor({
         label="全天營業"
       />
       {!is24 &&
-        period.map((p, index) => (
-          <PeriodContextProvider
-            key={index}
-            defaultStartTime={getDefaultTime(p.start)}
-            defaultEndTime={getDefaultTime(p.end)}
-          >
-            <PeriodEditor />
-          </PeriodContextProvider>
-        ))}
+        (period && period.length > 0) &&
+          <Box>
+            {
+              period.map((p, index) => (
+                  <PeriodEditor
+                    key={index}
+                    canDelete={period.length > 1}
+                    isLastOne={index+1 === period.length}
+                    onPeriodDelete={() => handlePeriodDelete(index)}
+                    onPeriodCreate={() => handelePeriodCreate()}
+                    startHourStr={getTime(p.start).hourStr}
+                    startMinuteStr={getTime(p.start).minuteStr}
+                    endHourStr={getTime(p.end).hourStr}
+                    endMinuteStr={getTime(p.end).minuteStr}
+                    startTimeType={p.startTimeType}
+                    endTimeType={p.endTimeType}
+                    onStartTimeChange={({hourStr, minuteStr}) => {
+                      const newRecord = {
+                        ...p,
+                        start: [hourStr, minuteStr]
+                      };
+                      handlePeriodChange(newRecord, index);
+                    }}
+                    onEndTimeChange={({hourStr, minuteStr}) => {
+                      const newRecord = {
+                        ...p,
+                        end: [hourStr, minuteStr]
+                      };
+                      handlePeriodChange(newRecord, index)
+                    }}
+                    onStartTimeTypeChange={(timeType) => {
+                      const newRecord = {
+                        ...p,
+                        startTimeType: timeType
+                      };
+                      handlePeriodChange(newRecord, index);
+                    }}
+                    onEndTimeTypeChange={(timeType) => {
+                      const newRecord = {
+                        ...p,
+                        endTimeType: timeType
+                      };
+                      handlePeriodChange(newRecord, index);
+                    }}
+                  />
+              ))
+            }
+            <Button onClick={handelePeriodCreate}>新增時段</Button>
+          </Box>
+      }
       <Button variant="contained" onClick={onBusinessTimeRemove}>
         刪除
       </Button>

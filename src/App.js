@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Button } from "@mui/material";
 
 import GeneralBusinessTimeEditor from "./GeneralBusinessTimeEditor";
+import { TYPE_AM, TYPE_PM, periodInitData } from "./businessTime/Constants";
 
 export default function App() {
   const [normalBusinessTime, setNormalBusinessTime] = useState({
@@ -10,17 +11,26 @@ export default function App() {
       week: [1, 2, 3],
       period: [
         {
-          start: "10:00",
-          end: "12:30"
+          start: ["10","00"],
+          startTimeType: TYPE_AM,
+          end: ["12","30"],
+          endTimeType: TYPE_AM,
         },
         {
-          start: "14:00",
-          end: "16:00"
+          start: ["02","00"],
+          startTimeType: TYPE_PM,
+          end: ["04","00"],
+          endTimeType: TYPE_PM
         }
-      ]
+      ],
+      is24: false,
+    },
+    1: {
+      week: [],
+      period: [periodInitData],
+      is24: false,
     }
   });
-  const [is24, setIs24] = useState(false);
 
   const getAllSelectedWeek = () => {
     if (normalBusinessTime) {
@@ -40,7 +50,8 @@ export default function App() {
             ...normalBusinessTime,
             [`${Math.random().toString().split(".")[1]}`]: {
               week: [],
-              period: []
+              period: [periodInitData],
+              is24: false,
             }
           })
         }
@@ -55,6 +66,13 @@ export default function App() {
             disableWeek={getAllSelectedWeek()}
             week={normalBusinessTime[k].week}
             period={normalBusinessTime[k].period}
+            is24={normalBusinessTime[k].is24}
+            handle24hCheckBoxChange={(checked) => 
+              setNormalBusinessTime({
+                ...normalBusinessTime,
+                [k]: { ...normalBusinessTime[k], is24: checked }
+              })
+            }
             onWeekChange={(newWeek) =>
               setNormalBusinessTime({
                 ...normalBusinessTime,
@@ -72,8 +90,7 @@ export default function App() {
               delete tt[k];
               setNormalBusinessTime(tt);
             }}
-            is24={is24}
-            handle24hCheckBoxChange={(checked) => setIs24(checked)}
+            
           />
         ))}
     </div>
