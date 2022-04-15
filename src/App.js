@@ -8,9 +8,19 @@ export default function App() {
   const [normalBusinessTime, setNormalBusinessTime] = useState({
     0: {
       week: [1, 2, 3],
-      period: []
+      period: [
+        {
+          start: "10:00",
+          end: "12:30"
+        },
+        {
+          start: "14:00",
+          end: "16:00"
+        }
+      ]
     }
   });
+  const [is24, setIs24] = useState(false);
 
   const getAllSelectedWeek = () => {
     if (normalBusinessTime) {
@@ -62,6 +72,8 @@ export default function App() {
               delete tt[k];
               setNormalBusinessTime(tt);
             }}
+            is24={is24}
+            handle24hCheckBoxChange={(checked) => setIs24(checked)}
           />
         ))}
     </div>

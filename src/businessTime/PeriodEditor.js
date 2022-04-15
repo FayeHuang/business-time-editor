@@ -1,13 +1,27 @@
-import { useState } from "react";
-import { Box, Typography, IconButton } from "@mui/material";
+import { useEffect, useState } from "react";
+import {
+  Box,
+  Typography,
+  IconButton,
+  FormControlLabel,
+  Checkbox
+} from "@mui/material";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 
 import { usePeriodContext } from "./PeriodContext";
 import TimePicker from "./TimePicker";
+import { TYPE_AM, TYPE_PM } from "./Constants";
 
 export default function PeriodEditor() {
-  const data = usePeriodContext();
-  console.log("-- context --", data);
+  const {
+    setStartTimeType,
+    setEndTimeType,
+    setStartHourStr,
+    setEndHourStr,
+    setStartMinuteStr,
+    setEndMinuteStr
+  } = usePeriodContext();
+
   return (
     <Box
       sx={{

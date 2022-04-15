@@ -9,14 +9,41 @@ const usePeriodContext = () => {
     throw new Error("usePeriodContext must be used within PeriodProvider!");
   return context;
 };
-const PeriodContextProvider = (props) => {
-  const [startTimeType, setStartTimeType] = useState(TYPE_AM);
-  const [endTimeType, setEndTypeTime] = useState(TYPE_AM);
-  const [startHourStr, setStartHourStr] = useState("");
-  const [endHourStr, setEndHourStr] = useState("");
-  const [startMinuteStr, setStartMinuteStr] = useState("");
-  const [endMinuteStr, setEndMinuteStr] = useState("");
-  const [is24, setIs24] = useState(false);
+const PeriodContextProvider = ({
+  defaultStartTime = null,
+  defaultEndTime = null,
+  ...props
+}) => {
+  const [startTimeType, setStartTimeType] = useState(
+    defaultStartTime ? defaultStartTime.timeType : TYPE_AM
+  );
+  const [endTimeType, setEndTimeType] = useState(
+    defaultEndTime ? defaultEndTime.timeType : TYPE_AM
+  );
+  const [startHourStr, setStartHourStr] = useState(
+    defaultStartTime ? defaultStartTime.hourStr : ""
+  );
+  const [endHourStr, setEndHourStr] = useState(
+    defaultEndTime ? defaultEndTime.hourStr : ""
+  );
+  const [startMinuteStr, setStartMinuteStr] = useState(
+    defaultStartTime ? defaultStartTime.minuteStr : ""
+  );
+  const [endMinuteStr, setEndMinuteStr] = useState(
+    defaultEndTime ? defaultEndTime.minuteStr : ""
+  );
+  const [is24, setIs24] = useState(
+    defaultStartTime &&
+      defaultEndTime &&
+      defaultStartTime.timeType === TYPE_AM &&
+      parseInt(defaultStartTime.hourStr, 10) === 0 &&
+      parseInt(defaultStartTime.minuteStr, 10) === 0 &&
+      defaultEndTime.timeType === TYPE_PM &&
+      parseInt(defaultEndTime.hourStr, 10) === 11 &&
+      parseInt(defaultEndTime.minuteStr, 10) === 59
+      ? true
+      : false
+  );
   const [isStartTimeValid, setIsStartTimeValid] = useState(false);
   const [isEndTimeValid, setIsEndTimeValid] = useState(false);
   const [startTimeErrMessage, setStartTimeErrMessage] = useState("");
@@ -34,7 +61,7 @@ const PeriodContextProvider = (props) => {
       startTimeType,
       setStartTimeType,
       endTimeType,
-      setEndTypeTime,
+      setEndTimeType,
       startHourStr,
       setStartHourStr,
       endHourStr,

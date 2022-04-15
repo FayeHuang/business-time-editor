@@ -15,7 +15,8 @@ export default function NumberInput({
   isHour = true,
   isMinute = false,
   isStartTime = true,
-  isEndTime = false
+  isEndTime = false,
+  disabled = false
 }) {
   const {
     startHourStr,
@@ -280,6 +281,7 @@ export default function NumberInput({
         hiddenLabel={true}
         value={getVal()}
         onChange={handleChange}
+        disabled={disabled}
       />
     </FormControl>
   );

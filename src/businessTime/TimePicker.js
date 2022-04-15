@@ -15,12 +15,16 @@ import {
   isEndTimeLaterThanStartTime
 } from "./lib";
 
-export default function TimePicker({ isStartTime = true, isEndTime = false }) {
+export default function TimePicker({
+  isStartTime = true,
+  isEndTime = false,
+  disabled = false
+}) {
   const {
     startTimeType,
     setStartTimeType,
     endTimeType,
-    setEndTypeTime,
+    setEndTimeType,
     isStartTimeValid,
     isEndTimeValid,
     startTimeErrMessage,
@@ -95,7 +99,7 @@ export default function TimePicker({ isStartTime = true, isEndTime = false }) {
         }
       }
     } else {
-      setEndTypeTime(val);
+      setEndTimeType(val);
       if (
         !isTimeValid({
           hoursStr: endHourStr,
@@ -167,6 +171,7 @@ export default function TimePicker({ isStartTime = true, isEndTime = false }) {
           hiddenLabel={true}
           disableUnderline={true}
           sx={{ mr: 1 }}
+          disabled={disabled}
         >
           <MenuItem value={TYPE_AM}>上午</MenuItem>
           <MenuItem value={TYPE_PM}>下午</MenuItem>
@@ -176,6 +181,7 @@ export default function TimePicker({ isStartTime = true, isEndTime = false }) {
           isMinute={false}
           isStartTime={isStartTime}
           isEndTime={isEndTime}
+          disabled={disabled}
         />
         <Typography sx={{ mx: 0.5 }} component="span">
           :
@@ -185,6 +191,7 @@ export default function TimePicker({ isStartTime = true, isEndTime = false }) {
           isMinute={true}
           isStartTime={isStartTime}
           isEndTime={isEndTime}
+          disabled={disabled}
         />
       </Box>
       <FormHelperText error={true}>
