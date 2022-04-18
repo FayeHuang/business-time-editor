@@ -7,35 +7,40 @@ export const isNumeric = (str) => {
   ); // ...and ensure strings of whitespace fail
 };
 
-export const TimeStr2DateTime = ({ hourStr, minuteStr, isPm = true }) => {
-  const hour = isPm ? parseInt(hourStr, 10) + 12 : parseInt(hourStr, 10);
+export const isValidDate = ({ hourStr, minuteStr, timeType }) => {
+  if (!isNumeric(hourStr) || !isNumeric(minuteStr) ) return false;
+
+  const tmpHourStr = (
+    timeType === TYPE_PM ? parseInt(hourStr, 10) + 12 : parseInt(hourStr, 10)
+  ).toLocaleString("en-US", {
+    minimumIntegerDigits: 2,
+    useGrouping: false,
+  });
+
+  const tmpMinuteStr = (parseInt(minuteStr,10)).toLocaleString("en-US", {
+    minimumIntegerDigits: 2,
+    useGrouping: false,
+  });
+
+  const timeStr = `${tmpHourStr}:${tmpMinuteStr}`;
+  const d = new Date(`1987-02-11T${timeStr}+00:00`);
+  return d instanceof Date && !isNaN(d);
+};
+
+export const TimeStr2DateTime = ({ hourStr, minuteStr, timeType }) => {
+  const hour =
+    timeType === TYPE_PM ? parseInt(hourStr, 10) + 12 : parseInt(hourStr, 10);
   const minute = parseInt(minuteStr, 10);
   const correctHourStr = hour.toLocaleString("en-US", {
     minimumIntegerDigits: 2,
-    useGrouping: false
+    useGrouping: false,
   });
   const correctMinuteStr = minute.toLocaleString("en-US", {
     minimumIntegerDigits: 2,
-    useGrouping: false
+    useGrouping: false,
   });
   const timeStr = `${correctHourStr}:${correctMinuteStr}`;
   return new Date(`1987-02-11T${timeStr}+00:00`);
-};
-
-export const isHoursValid = (hourStr) => {
-  if (!isNumeric(hourStr)) return false;
-
-  const hour = parseInt(hourStr, 10);
-  if (0 <= hour && hour <= 12) return true;
-  else return false;
-};
-
-export const isMinutesValid = (minuteStr) => {
-  if (!isNumeric(minuteStr)) return false;
-
-  const minute = parseInt(minuteStr, 10);
-  if (0 <= minute && minute <= 59) return true;
-  else return false;
 };
 
 export const isStartTimeEarlierThanEndTime = ({
@@ -44,17 +49,17 @@ export const isStartTimeEarlierThanEndTime = ({
   startTimeType,
   endTimeType,
   endHourStr,
-  endMinuteStr
+  endMinuteStr,
 }) => {
   const start = TimeStr2DateTime({
     hourStr: startHourStr,
     minuteStr: startMinuteStr,
-    isPm: startTimeType === TYPE_PM
+    isPm: startTimeType === TYPE_PM,
   });
   const end = TimeStr2DateTime({
     hourStr: endHourStr,
     minuteStr: endMinuteStr,
-    isPm: endTimeType === TYPE_PM
+    isPm: endTimeType === TYPE_PM,
   });
 
   if (start < end) return true;
@@ -72,34 +77,14 @@ export const isEndTimeLaterThanStartTime = ({
   const start = TimeStr2DateTime({
     hourStr: startHourStr,
     minuteStr: startMinuteStr,
-    isPm: startTimeType === TYPE_PM
+    isPm: startTimeType === TYPE_PM,
   });
   const end = TimeStr2DateTime({
     hourStr: endHourStr,
     minuteStr: endMinuteStr,
-    isPm: endTimeType === TYPE_PM
+    isPm: endTimeType === TYPE_PM,
   });
 
   if (end > start) return true;
-  else return false;
-};
-
-export const isTimeValid = ({ hourStr, minuteStr, isPm }) => {
-  const target = TimeStr2DateTime({
-    hourStr,
-    minuteStr,
-    isPm
-  });
-  const dayBegin = TimeStr2DateTime({
-    hourStr: "00",
-    minuteStr: "00",
-    isPm: false
-  });
-  const dayEnd = TimeStr2DateTime({
-    hourStr: "24",
-    minuteStr: "00",
-    isPm: false
-  });
-  if (target >= dayBegin && target <= dayEnd) return true;
   else return false;
 };

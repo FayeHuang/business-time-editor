@@ -4,11 +4,10 @@ import {
   Select,
   MenuItem,
   Typography,
-  FormHelperText
+  FormHelperText,
 } from "@mui/material";
 import NumberInput from "./NumberInput";
 import { TYPE_AM, TYPE_PM } from "./Constants";
-
 
 export default function TimePicker(props) {
   const {
@@ -16,15 +15,8 @@ export default function TimePicker(props) {
     isEndTime = false,
     disabled = false,
     //
-    startHourStr="",
-    startMinuteStr="",
-    endHourStr="",
-    endMinuteStr="",
-    // 
     startTimeType,
     endTimeType,
-    onStartTimeTypeChange,
-    onEndTimeTypeChange,
     //
     isStartTimeValid,
     isEndTimeValid,
@@ -35,37 +27,15 @@ export default function TimePicker(props) {
     startTimeRangeErrMessage,
     endTimeRangeErrMessage,
     //
-    verifyEndTime,
-    verifyStartTime,
+    handleStartTimeTypeChange,
+    handleEndTimeTypeChange,
   } = props;
 
   const handleChange = (e) => {
     const timeType = e.target.value;
-    if (isStartTime) {
-      onStartTimeTypeChange(timeType);
-      verifyStartTime({
-        startHourStr,
-        startMinuteStr,
-        startTimeType: timeType,
-        endTimeType,
-        endHourStr,
-        endMinuteStr
-      });
-    } else {
-      onEndTimeTypeChange(timeType);
-      verifyEndTime({
-        startHourStr,
-        startMinuteStr,
-        startTimeType,
-        endTimeType: timeType,
-        endHourStr,
-        endMinuteStr
-      });
-    }
+    if (isStartTime) handleStartTimeTypeChange(timeType);
+    else handleEndTimeTypeChange(timeType);
   };
-
-  console.log('isEndTimeValid: ', isEndTimeValid)
-  console.log('endTimeErrMessage: ', endTimeErrMessage)
 
   return (
     <Box>
@@ -75,7 +45,7 @@ export default function TimePicker(props) {
           borderRadius: 1,
           borderStyle: "solid",
           borderColor: "rgba(0, 0, 0, 0.23)",
-          display: "inline-block"
+          display: "inline-block",
         }}
         component="form"
         noValidate

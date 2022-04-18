@@ -8,80 +8,29 @@ export default function NumberInput({
   isEndTime = false,
   disabled = false,
   //
-  startHourStr="",
-  startMinuteStr="",
-  endHourStr="",
-  endMinuteStr="",
-  // 
-  onStartTimeChange,
-  onEndTimeChange,
+  startHourStr = "",
+  startMinuteStr = "",
+  endHourStr = "",
+  endMinuteStr = "",
   //
-  startTimeType,
-  endTimeType,
-  //
-  verifyEndTime,
-  verifyStartTime,
+  handleStartHourChange,
+  handleStartMinuteChange,
+  handleEndHourChange,
+  handleEndMinuteChange,
 }) {
   const getVal = () => {
-    if (isStartTime) {
-      if (isHour) return startHourStr;
-      else return startMinuteStr;
-    } else {
-      if (isHour) return endHourStr;
-      else return endMinuteStr;
-    }
+    if (isStartTime && isHour) return startHourStr;
+    else if (isStartTime && isMinute) return startMinuteStr;
+    else if (isEndTime && isHour) return endHourStr;
+    else if (isEndTime && isMinute) return endMinuteStr;
   };
 
   const handleChange = (e) => {
     const val = e.target.value;
-    if (isStartTime) {
-      if (isHour) {
-        // start hours
-        onStartTimeChange({ hourStr: val, minuteStr: startMinuteStr });
-        verifyStartTime({
-          startHourStr: val,
-          startMinuteStr,
-          startTimeType,
-          endTimeType,
-          endHourStr,
-          endMinuteStr
-        });
-      } else {
-        // start minutes
-        onStartTimeChange({ hourStr: startHourStr, minuteStr: val });
-        verifyStartTime({
-          startHourStr,
-          startMinuteStr: val,
-          startTimeType,
-          endTimeType,
-          endHourStr,
-          endMinuteStr
-        });
-      }
-    } else {
-      if (isHour) {
-        // end hours
-        onEndTimeChange({ hourStr: val, minuteStr: endMinuteStr });
-        verifyEndTime({
-          startHourStr,
-          startMinuteStr,
-          startTimeType,
-          endTimeType,
-          endHourStr: val,
-          endMinuteStr
-        });
-      } else {
-        onEndTimeChange({ hourStr: endHourStr, minuteStr: val });
-        verifyEndTime({
-          startHourStr,
-          startMinuteStr,
-          startTimeType,
-          endTimeType,
-          endHourStr,
-          endMinuteStr: val
-        });
-      }
-    }
+    if (isStartTime && isHour) handleStartHourChange(val);
+    else if (isStartTime && isMinute) handleStartMinuteChange(val);
+    else if (isEndTime && isHour) handleEndHourChange(val);
+    else if (isEndTime && isMinute) handleEndMinuteChange(val);
   };
 
   return (
